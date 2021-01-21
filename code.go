@@ -7,27 +7,57 @@ type Node struct {
 	Next *Node
 }
 
-func GenerateRing(seed []int, ct int) (Node, map[int]Node) {
-	nodeMap := make(map[int]Node)
-	firstNode := Node{ID: seed[0]}
-	firstNodeAddress := &firstNode
-	var appendTo Node
-	appendTo = firstNode
-	var value int
-	for i := 1; i < ct; i++ {
-		if i < len(seed) {
-			value = seed[i]
+func GenerateRing(seed []int, ct int) (Node, map[int]*Node) {
+	nodeMap := make(map[int]*Node)
+	nodes := make([]Node, ct+1)
+	for i := 1; i <= ct; i++ {
+		var value int
+		if i <= len(seed) {
+			value = seed[i-1]
 		} else {
 			value = i
 		}
-		newNode := Node{ID: value}
-		appendTo.Next = &newNode
-		fmt.Printf("%p %v \n", &appendTo, appendTo)
-
-		appendTo = newNode
+		nodes[i] = Node{ID: value}
+		if i > 1 {
+			nodes[i-1].Next = &nodes[i]
+		}
 	}
-	fmt.Println(appendTo)
-	appendTo.Next = firstNodeAddress
-	fmt.Println(appendTo)
-	return *(appendTo.Next), nodeMap
+	for i := 1; i <= ct; i++ {
+		nodeMap[nodes[i].ID] = &nodes[i]
+	}
+	nodes[ct].Next = &nodes[1]
+	return nodes[1], nodeMap
+}
+
+func IndexFor(given int, banlist []int, numNodes int) int {
+	fmt.Println(given, banlist, numNodes)
+	for i := 1; i < len(banlist)+2; i++ {
+		candidate := given - i
+		if candidate <= 0 {
+			candidate += numNodes
+		}
+		if Contains(banlist, candidate) {
+			continue
+		}
+		return candidate
+	}
+	return -1
+}
+
+func Contains(lst []int, target int) bool {
+	for _, v := range lst {
+		if v == target {
+			return true
+		}
+	}
+	return false
+}
+
+func PrintRing(node Node, terms int) {
+	position := node
+	for i := 0; i < terms; i++ {
+		fmt.Print(position.ID, " ")
+		position = *position.Next
+	}
+	fmt.Println()
 }

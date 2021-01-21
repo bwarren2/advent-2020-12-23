@@ -8,13 +8,27 @@ import (
 
 func TestPart2(t *testing.T) {
 	firstFew := []int{6, 2, 4, 3, 9, 7, 1, 5, 8}
-	firstNode, nodeMap := advent.GenerateRing(firstFew, 9)
-	// next := firstNode.Next
-	fmt.Println(firstNode)
-	// next = next.Next
-	for i := 0; i <= 9; i++ {
+	iterations := 3
+	numNodes := 9
+	firstNode, nodeMap := advent.GenerateRing(firstFew, numNodes)
+	currentNode := firstNode
+	// advent.PrintRing(currentNode, numNodes)
+	for i := 0; i < iterations; i++ {
+		advent.PrintRing(currentNode, numNodes)
+		snip := currentNode.Next
+		currentNode.Next = currentNode.Next.Next.Next.Next
+		advent.PrintRing(currentNode, numNodes)
+		nextThree := []int{snip.ID, snip.Next.ID, snip.Next.Next.ID}
+		fmt.Println(nextThree)
+		insertAfter := advent.IndexFor(currentNode.ID, nextThree, len(nodeMap))
+
+		fmt.Println(insertAfter)
+		leftNode := *(nodeMap[insertAfter])
+		rightNodePointer := leftNode.Next
+		leftNode.Next = snip
+		leftNode.Next.Next.Next.Next = rightNodePointer
+		currentNode = *currentNode.Next
 	}
-	fmt.Println(nodeMap)
 	t.Fail()
 }
 
