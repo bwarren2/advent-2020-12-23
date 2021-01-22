@@ -54,10 +54,10 @@ func Contains(lst []int, target int) bool {
 }
 
 func PrintRing(node Node, terms int) {
-	position := node
-	for i := 0; i < terms; i++ {
-		fmt.Print(position.ID, " ")
-		position = *position.Next
+	currentNode := &node
+	for i := 0; i <= terms; i++ {
+		fmt.Printf("%v %p ", currentNode.ID, *currentNode)
+		currentNode = currentNode.Next
 	}
 	fmt.Println()
 }
